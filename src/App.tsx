@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router";
+import { BrowserRouter as Router, Routes, Route } from "react-router";
 import Sidebar from "./components/Sidebar";
-// import Home from "./pages/Home";
-// import City from "./pages/City";
-
+import Home from "./pages/home/index";
+import City from "./pages/city/index";
+import Header from "./components/Header";
+import Weather from "./types/weather";
 const App: React.FC = () => {
   // Use state for dynamic cities list
-  const [cities, setCities] = useState<string[]>(["london", "paris"]);
+  const [cities, setCities] = useState<Weather[]>([]);
+  const [query, setQuery] = useState<string>("");
 
   return (
     <Router>
-      <div>
-        <nav>
+      <div className="flex h-[100vh]">
+        {/* <nav>
           <ul>
             <li>
               <Link to="/">Home</Link>
@@ -22,12 +24,25 @@ const App: React.FC = () => {
               </li>
             ))}
           </ul>
-        </nav>
-        <Sidebar />
-        <Routes>
-          <Route path="/" element={<p>Home</p>} />
-          <Route path="/city/:cityId" element={<p>City</p>} />
-        </Routes>
+        </nav> */}
+        <Sidebar
+          setQuery={setQuery}
+          query={query}
+          cities={cities}
+          setCities={setCities}
+        />
+        <div className="w-full ">
+          <Header />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/city/:cityId"
+              element={
+                <City query={query} setCities={setCities} cities={cities} />
+              }
+            />
+          </Routes>
+        </div>
       </div>
     </Router>
   );
