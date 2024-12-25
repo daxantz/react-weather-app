@@ -1,13 +1,7 @@
 import { Link } from "react-router";
+import Weather from "../types/weather";
 
-type CityLinkProps = {
-  country: string;
-  name: string;
-  temp: number;
-  id: number;
-};
-
-const CityLink = ({ country, name, temp, id }: CityLinkProps) => {
+const CityLink = (cityWeather: Weather) => {
   return (
     <div className="flex justify-around items-center border uppercase">
       <div className="flex items-center w-72 gap-3  ">
@@ -15,13 +9,13 @@ const CityLink = ({ country, name, temp, id }: CityLinkProps) => {
           🇫🇷
         </div>
         <div className="flex gap-5 ml-5">
-          <span>{country}</span>
-          <span>{name}</span>
+          <span>{cityWeather.sys.country}</span>
+          <span>{cityWeather.name}</span>
         </div>
       </div>
       <div className="flex gap-5">
-        <span>{temp}&#x2103;</span>
-        <Link to={`city/${id}`}>
+        <span>{cityWeather.main.temp}&#x2103;</span>
+        <Link to={`city/${cityWeather.id}`}>
           {" "}
           <span>&rarr;</span>
         </Link>
