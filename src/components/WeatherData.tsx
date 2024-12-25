@@ -35,7 +35,7 @@ type Weather = {
 };
 
 type WeatherDataProps = {
-  currentWeather: Weather;
+  currentWeather: Weather | undefined;
 };
 
 const WeatherData = ({ currentWeather }: WeatherDataProps) => {
@@ -47,22 +47,22 @@ const WeatherData = ({ currentWeather }: WeatherDataProps) => {
           <div className="flex gap-3 mb-3">
             <img className="w-14  " src="/clouds.png" alt="" />
             <span>
-              {currentWeather.weather[0]?.description || "No description"}
+              {currentWeather?.weather[0]?.description || "No description"}
             </span>
           </div>
           <span className="text-6xl mb-3 ">
-            {currentWeather.main?.temp
+            {currentWeather?.main?.temp
               ? `${Math.floor(currentWeather.main.temp)}°F`
               : "N/A"}
           </span>
-          <span>{currentWeather.name || "Unknown location"}</span>
+          <span>{currentWeather?.name || "Unknown location"}</span>
         </div>
         <p className="mb-4">Your Location</p>
         <div className="flex w-full border border-purple-600 gap-5 ">
           <div className="border border-red-600 w-48 flex flex-col items-center justify-center  bg-slate-600  text-white p-10">
             <h3>Feels Like</h3>
             <span className="text-5xl font-medium">
-              {currentWeather.main?.feels_like
+              {currentWeather?.main?.feels_like
                 ? `${Math.floor(currentWeather.main.feels_like)}°F`
                 : "N/A"}
             </span>
@@ -70,23 +70,31 @@ const WeatherData = ({ currentWeather }: WeatherDataProps) => {
           <div className="border border-red-600 flex flex-col w-48  items-center justify-center  bg-slate-600  text-white ">
             <h3>Max Temp</h3>
             <span className="text-5xl font-medium">
-              {Math.floor(currentWeather.main.temp_max)}&deg;F
+              {currentWeather
+                ? Math.floor(currentWeather.main.temp_max)
+                : "error"}
+              &deg;F
             </span>
-            <span>{currentWeather.weather[0].main}</span>
+            <span>
+              {currentWeather ? currentWeather?.weather[0].main : "error"}
+            </span>
           </div>
           <div className="border border-red-600 bg-slate-600  text-white flex flex-col items-center justify-center w-48 ">
             <h3>Min Temp</h3>
             <span className="text-5xl font-medium ">
-              {Math.floor(currentWeather.main.temp_min)}&deg;F
+              {currentWeather
+                ? Math.floor(currentWeather.main.temp_min)
+                : "error"}
+              &deg;F
             </span>
-            <span>{currentWeather.weather[0].main}</span>
+            <span>{currentWeather?.weather[0].main}</span>
           </div>
           <div className="border border-red-600 w-48 flex flex-col items-center justify-center  bg-slate-600  text-white">
             <h3>Humidity</h3>
             <span className="text-5xl font-medium">
-              {currentWeather.main.humidity}%
+              {currentWeather?.main.humidity}%
             </span>
-            <span>{currentWeather.weather[0].main}</span>
+            <span>{currentWeather?.weather[0].main}</span>
           </div>
         </div>
       </div>
@@ -111,7 +119,7 @@ const WeatherData = ({ currentWeather }: WeatherDataProps) => {
             <img className="mb-4" src="/wind.png" alt="" />
             <div className="flex justify-between mb-4">
               <h4>Wind</h4>
-              <span>{currentWeather.wind.speed} km/h</span>
+              <span>{currentWeather?.wind.speed} km/h</span>
             </div>
             <p>
               The air quality is generally acceptable for most individuals.
@@ -125,7 +133,7 @@ const WeatherData = ({ currentWeather }: WeatherDataProps) => {
             <img className="mb-4" src="/clouds.png" alt="" />
             <div className="flex justify-between mb-4">
               <h4>Cloudy</h4>
-              <span>{currentWeather.clouds.all}%</span>
+              <span>{currentWeather?.clouds.all}%</span>
             </div>
             <p>
               The air quality is generally acceptable for most individuals.
@@ -139,7 +147,7 @@ const WeatherData = ({ currentWeather }: WeatherDataProps) => {
             <img className="mb-4" src="/water.png" alt="" />
             <div className="flex justify-between mb-4">
               <h4>Humidity</h4>
-              <span>{currentWeather.main.humidity}%</span>
+              <span>{currentWeather?.main.humidity}%</span>
             </div>
             <p>
               The air quality is generally acceptable for most individuals.
