@@ -1,6 +1,6 @@
 const Header = () => {
   return (
-    <div className="border border-green-400 p-4 flex gap-80">
+    <div className="border border-green-400 p-16 flex gap-80">
       <h1 className="text-5xl font-medium">
         Here you can find a world <br /> wide weather forecast
       </h1>
