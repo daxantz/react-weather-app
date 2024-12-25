@@ -1,10 +1,18 @@
 import React from "react";
 import { useParams } from "react-router";
-
-const City: React.FC = () => {
+import Weather from "../../types/weather";
+import WeatherData from "../../components/WeatherData";
+type CityProps = {
+  query: string;
+  setCities: React.Dispatch<React.SetStateAction<Weather[]>>;
+  cities: Weather[];
+};
+const City: React.FC<CityProps> = ({ cities }) => {
   const { cityId } = useParams<{ cityId: string }>();
 
-  return <div>{cityId}</div>;
+  const currentCity = cities.find((city) => city.id === Number(cityId));
+
+  return <WeatherData currentWeather={currentCity} />;
 };
 
 export default City;
