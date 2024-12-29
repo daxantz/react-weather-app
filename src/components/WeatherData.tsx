@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 type Weather = {
   coord: {
     lon: number;
@@ -30,8 +32,10 @@ type Weather = {
     sunset: number; // Sunset time (UNIX timestamp)
     id: number;
   };
+
   name: string; // City name
   dt: number; // Data calculation time (UNIX timestamp)
+  rain?: { "1h": number };
 };
 
 type WeatherDataProps = {
@@ -39,13 +43,54 @@ type WeatherDataProps = {
 };
 
 const WeatherData = ({ currentWeather }: WeatherDataProps) => {
+  const [weatherImage, setWeatherImage] = useState("");
+
+  useEffect(() => {
+    async function getWeatherImage() {
+      try {
+        // setIsLoading(true);
+
+        const res = await fetch(
+          `${import.meta.env.VITE_UNSPLASH_URL}client_id=${
+            import.meta.env.VITE_UNSPLASH_KEY
+          }&per_page=1&query=${
+            currentWeather?.weather[0].main
+          }&orientation=landscape`
+        );
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        } else {
+          const data = await res.json();
+          console.log(data);
+          setWeatherImage(data.results[0].urls.regular);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          // setFetchError(error.message);
+        } else {
+          // setFetchError("An unknown error occurred.");
+        }
+      } finally {
+        // setIsLoading(false);
+      }
+    }
+    getWeatherImage();
+  }, [currentWeather?.weather]);
+
+  const imageStyles = {
+    backgroundImage: `url(${weatherImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  };
   return (
     <div className="flex ">
       <div className="border border-pink-400 w-[60%] p-16">
         <h2>Home - Your Location</h2>
-        <div className="flex flex-col border border-blue-600 bg-[url('/cloudbg.png')] object-contain text-white bg-slate-700 p-7 mb-16">
+        <div
+          className={`flex flex-col border border-blue-600  object-contain text-white bg-slate-700 p-7 mb-16`}
+          style={imageStyles}
+        >
           <div className="flex gap-3 mb-3">
-            <img className="w-14  " src="/clouds.png" alt="" />
             <span>
               {currentWeather?.weather[0]?.description || "No description"}
             </span>
@@ -105,7 +150,11 @@ const WeatherData = ({ currentWeather }: WeatherDataProps) => {
             <img className="mb-4" src="/rain.png" alt="" />
             <div className="flex justify-between mb-4">
               <h4>Rain</h4>
-              <span>00 mm</span>
+              <span>
+                {currentWeather?.rain
+                  ? currentWeather.rain["1h"] + "mm"
+                  : "no rain data available"}
+              </span>
             </div>
             <p>
               The air quality is generally acceptable for most individuals.
