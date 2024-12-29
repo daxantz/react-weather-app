@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import Sidebar from "./components/Sidebar";
 import Home from "./pages/home/index";
@@ -38,7 +38,11 @@ const App: React.FC = () => {
             <Route
               path="/city/:cityId"
               element={
-                <City query={query} setCities={setCities} cities={cities} />
+                cities.length > 0 ? (
+                  <City query={query} setCities={setCities} cities={cities} />
+                ) : (
+                  <p>Search for a city to get started</p>
+                )
               }
             />
           </Routes>
