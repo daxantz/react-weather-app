@@ -1,110 +1,79 @@
 import { useEffect, useState } from "react";
-
-type Weather = {
-  coord: {
-    lon: number;
-    lat: number;
-  };
-  weather: {
-    id: number;
-    main: string; // e.g., "Rain"
-    description: string; // e.g., "light rain"
-    icon: string; // e.g., "10d"
-  }[];
-  main: {
-    temp: number; // Temperature in Kelvin
-    feels_like: number; // Feels-like temperature
-    temp_min: number; // Minimum temperature
-    temp_max: number; // Maximum temperature
-    pressure: number; // Atmospheric pressure
-    humidity: number; // Humidity percentage
-  };
-  wind: {
-    speed: number; // Wind speed
-    deg: number; // Wind direction
-  };
-  clouds: {
-    all: number; // Cloudiness percentage
-  };
-  sys: {
-    country: string; // Country code, e.g., "US"
-    sunrise: number; // Sunrise time (UNIX timestamp)
-    sunset: number; // Sunset time (UNIX timestamp)
-    id: number;
-  };
-
-  name: string; // City name
-  dt: number; // Data calculation time (UNIX timestamp)
-  rain?: { "1h": number };
-};
+import ImageSlider from "./ImageSlider";
+import Image from "../types/image";
+import Weather from "../types/weather";
 
 type WeatherDataProps = {
   currentWeather: Weather | undefined;
 };
 
 const WeatherData = ({ currentWeather }: WeatherDataProps) => {
-  const [weatherImage, setWeatherImage] = useState("");
-
+  const [weatherImages, setWeatherImages] = useState<Image[] | undefined>(
+    undefined
+  );
+  const [isloading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState("");
   useEffect(() => {
     async function getWeatherImage() {
       try {
-        // setIsLoading(true);
+        setIsLoading(true);
 
         const res = await fetch(
           `${import.meta.env.VITE_UNSPLASH_URL}client_id=${
             import.meta.env.VITE_UNSPLASH_KEY
-          }&per_page=1&query=${
+          }&query=${
             currentWeather?.weather[0].main
-          }&orientation=landscape`
+          }&orientation=landscape&per_page=5`
         );
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         } else {
           const data = await res.json();
           console.log(data);
-          setWeatherImage(data.results[0].urls.regular);
+          setWeatherImages(data.results);
         }
       } catch (error) {
         if (error instanceof Error) {
-          // setFetchError(error.message);
+          setFetchError(error.message);
         } else {
-          // setFetchError("An unknown error occurred.");
+          setFetchError("An unknown error occurred.");
         }
       } finally {
-        // setIsLoading(false);
+        setIsLoading(false);
       }
     }
     getWeatherImage();
   }, [currentWeather?.weather]);
 
-  const imageStyles = {
-    backgroundImage: `url(${weatherImage})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  };
   return (
     <div className="flex ">
-      <div className="border border-pink-400 w-[60%] p-16">
+      <div className=" w-[60%] p-16">
         <h2>Home - Your Location</h2>
-        <div
-          className={`flex flex-col border border-blue-600  object-contain text-white bg-slate-700 p-7 mb-16`}
-          style={imageStyles}
+        <ImageSlider
+          error={fetchError}
+          isLoading={isloading}
+          images={weatherImages}
         >
-          <div className="flex gap-3 mb-3">
-            <span>
-              {currentWeather?.weather[0]?.description || "No description"}
+          <div className="text-slate-500">
+            <div className="flex gap-3 mb-3 ">
+              <span>
+                {currentWeather?.weather[0]?.description || "No description"}
+              </span>
+            </div>
+            <span className="text-6xl mb-3 block  ">
+              {currentWeather?.main?.temp
+                ? `${Math.floor(currentWeather.main.temp)}°F`
+                : "N/A"}
+            </span>
+            <span className="text-2xl font-medium">
+              {currentWeather?.name || "Unknown location"}
             </span>
           </div>
-          <span className="text-6xl mb-3 ">
-            {currentWeather?.main?.temp
-              ? `${Math.floor(currentWeather.main.temp)}°F`
-              : "N/A"}
-          </span>
-          <span>{currentWeather?.name || "Unknown location"}</span>
-        </div>
-        <p className="mb-4">Your Location</p>
-        <div className="flex w-full border border-purple-600 gap-5 ">
-          <div className="border border-red-600 w-48 flex flex-col items-center justify-center  bg-slate-600  text-white p-10">
+        </ImageSlider>
+
+        {/* <p className="mb-4">Your Location</p> */}
+        <div className="xl:flex lg:grid lg:grid-cols-2 lg:grid-rows-3  w-full  gap-5 ">
+          <div className=" flex-1 flex flex-col items-center justify-center  bg-slate-600  text-white py-12 ">
             <h3>Feels Like</h3>
             <span className="text-5xl font-medium">
               {currentWeather?.main?.feels_like
@@ -112,7 +81,7 @@ const WeatherData = ({ currentWeather }: WeatherDataProps) => {
                 : "N/A"}
             </span>
           </div>
-          <div className="border border-red-600 flex flex-col w-48  items-center justify-center  bg-slate-600  text-white ">
+          <div className=" flex flex-1 flex-col items-center justify-center  bg-slate-600  text-white ">
             <h3>Max Temp</h3>
             <span className="text-5xl font-medium">
               {currentWeather
@@ -124,7 +93,7 @@ const WeatherData = ({ currentWeather }: WeatherDataProps) => {
               {currentWeather ? currentWeather?.weather[0].main : "error"}
             </span>
           </div>
-          <div className="border border-red-600 bg-slate-600  text-white flex flex-col items-center justify-center w-48 ">
+          <div className=" bg-slate-600  text-white flex flex-1 flex-col items-center justify-center  ">
             <h3>Min Temp</h3>
             <span className="text-5xl font-medium ">
               {currentWeather
@@ -134,7 +103,7 @@ const WeatherData = ({ currentWeather }: WeatherDataProps) => {
             </span>
             <span>{currentWeather?.weather[0].main}</span>
           </div>
-          <div className="border border-red-600 w-48 flex flex-col items-center justify-center  bg-slate-600  text-white">
+          <div className="  flex flex-1 flex-col items-center justify-center  bg-slate-600  text-white">
             <h3>Humidity</h3>
             <span className="text-5xl font-medium">
               {currentWeather?.main.humidity}%
@@ -144,8 +113,8 @@ const WeatherData = ({ currentWeather }: WeatherDataProps) => {
         </div>
       </div>
       {/* side data */}
-      <div className=" w-full">
-        <div className="border  ">
+      <div className=" w-full border border-l-1">
+        <div>
           <div className="p-10">
             <img className="mb-4" src="/rain.png" alt="" />
             <div className="flex justify-between mb-4">
