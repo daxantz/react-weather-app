@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import Weather from "../types/weather";
+
 import { get } from "country-flag-emoji";
 const CityLink = (
   cityWeather: Weather & {
