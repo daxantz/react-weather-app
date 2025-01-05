@@ -1,14 +1,8 @@
 import React, { useState } from "react";
 import CityLink from "./CityLink";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import Weather from "../types/weather";
 import { get } from "country-flag-emoji";
-
-// const placeholderData = [
-//   { country: "UK", name: "London", temp: 17, id: 24 },
-//   { country: "Br", name: "Rio", temp: 64, id: 532 },
-//   { country: "Au", name: "sydney", temp: 77, id: 444 },
-// ];
 
 type SidebarProps = {
   setQuery: React.Dispatch<React.SetStateAction<string>>;
@@ -26,7 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [currentCity, setCurrentCity] = useState<Weather | undefined>();
-  const navigate = useNavigate();
+
   async function getWeather() {
     try {
       setIsLoading(true);
@@ -47,6 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           return [...cities, data];
         });
         const city = cities.find((city) => city.name === data.name);
+        setCurrentCity(city);
         console.log(city);
         console.log(data);
       }
@@ -62,22 +57,22 @@ const Sidebar: React.FC<SidebarProps> = ({
   }
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (cities.find((city) => city.name === query)) {
+    const foundCity = cities.find((city) => city.name === query);
+    if (foundCity) {
       //check if city was already added to list , add to list if it doesnt
       throw new Error("this city was already added");
     }
 
     getWeather();
 
-    // navigate(`/city/${city?.id}`);
     setQuery("");
   }
 
   return (
-    <div className="p-5 border border-black w-[25%]">
+    <div className="p-5 border border-r-3 w-[25%]">
       <div className="flex-col gap-5 flex ">
         <Link to="/">
-          <div className="flex p-20 gap-5">
+          <div className="flex p-10 gap-5">
             <img className="w-12" src="/logo.png" alt="" />
             <div>
               <h1 className="uppercase text-lg font-normal">byforecast</h1>
@@ -92,7 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           </div>
           <div>
             <p className="text-blue-950 font-light">Current Location</p>
-            <p>United Kingdom - London</p>
+            <p>{currentCity?.name}</p>
           </div>
         </div>
         <form onSubmit={handleSubmit}>
@@ -118,6 +113,8 @@ const Sidebar: React.FC<SidebarProps> = ({
           ))}
         </div>
       </div>
+      {isLoading && <span>{isLoading}</span>}
+      {fetchError && <span>{fetchError}</span>}
     </div>
   );
 };
