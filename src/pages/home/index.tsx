@@ -21,7 +21,7 @@ const Home: React.FC = () => {
       }
     );
   }, []);
-  console.log(import.meta.env.VITE_API_KEY);
+
   useEffect(() => {
     async function getWeather() {
       try {
@@ -60,12 +60,10 @@ const Home: React.FC = () => {
   ]);
   return (
     <div className="">
-      {currentWeather ? (
-        <WeatherData currentWeather={currentWeather} />
-      ) : (
-        <p>Loading weather data...</p>
-      )}
+      {isLoading && <p>Loading...</p>}
+      {currentWeather && <WeatherData currentWeather={currentWeather} />}
       {fetchError && <p>Error fetching weather: {fetchError}</p>}
+      {locationError && <p>Error getting users location: {locationError}</p>}
     </div>
   );
 };
