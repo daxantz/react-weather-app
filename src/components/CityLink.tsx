@@ -10,7 +10,7 @@ const CityLink = (
 ) => {
   const { setCities, setCurrentCity, cities } = cityWeather;
 
-  function deleteCity(id) {
+  function deleteCity(id: number) {
     setCities((cities) => {
       return cities.filter((city) => city.id !== id);
     });
