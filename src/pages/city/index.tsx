@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { useParams } from "react-router";
 import Weather from "../../types/weather";
 import WeatherData from "../../components/WeatherData";
