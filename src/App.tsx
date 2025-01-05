@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import Sidebar from "./components/Sidebar";
 import Home from "./pages/home/index";
@@ -12,26 +12,14 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div className="flex h-[100vh]">
-        {/* <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            {cities.map((city) => (
-              <li key={city}>
-                <Link to={`/city/${city}`}>{city}</Link>
-              </li>
-            ))}
-          </ul>
-        </nav> */}
+      <div className="flex  ">
         <Sidebar
           setQuery={setQuery}
           query={query}
           cities={cities}
           setCities={setCities}
         />
-        <div className="w-full ">
+        <div className="w-[75%] ">
           <Header />
           <Routes>
             <Route path="/" element={<Home />} />
