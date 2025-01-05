@@ -30,8 +30,10 @@ type Weather = {
     sunset: number; // Sunset time (UNIX timestamp)
     id: number;
   };
+
   name: string; // City name
   dt: number; // Data calculation time (UNIX timestamp)
+  rain?: { "1h": number };
   id: number;
 };
 
