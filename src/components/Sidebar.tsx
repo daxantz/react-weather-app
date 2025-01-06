@@ -1,37 +1,28 @@
 import React, { useState } from "react";
 import CityLink from "./CityLink";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Weather from "../types/weather";
 import { get } from "country-flag-emoji";
 
-type SidebarProps = {
-  setQuery: React.Dispatch<React.SetStateAction<string>>;
-  query: string;
-  cities: Weather[];
-  setCities: React.Dispatch<React.SetStateAction<Weather[]>>;
-};
-
-const Sidebar: React.FC<SidebarProps> = ({
-  setQuery,
-  query,
-  cities,
-  setCities,
-}) => {
+const Sidebar = () => {
+  const [cities, setCities] = useState<Weather[]>([]);
+  const [query, setQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [currentCity, setCurrentCity] = useState<Weather | undefined>();
-
-  async function getWeather() {
+  const navigate = useNavigate();
+  async function getWeather(city: string) {
     try {
       setIsLoading(true);
 
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}?q=${query}&appid=${
+        `${import.meta.env.VITE_API_URL}?q=${city}&appid=${
           import.meta.env.VITE_API_KEY
         }&units=imperial`
       );
+      console.log(res);
       if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+        throw new Error(`Enter a city that exists`);
       } else {
         const data = (await res.json()) as Weather;
 
@@ -40,9 +31,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 
           return [...cities, data];
         });
-        const city = cities.find((city) => city.name === data.name);
-        setCurrentCity(city);
-        console.log(city);
+
+        setCurrentCity(data);
+        navigate(`/city/${data.name}`);
+
         console.log(data);
       }
     } catch (error) {
@@ -55,6 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       setIsLoading(false);
     }
   }
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const foundCity = cities.find((city) => city.name === query);
@@ -62,10 +55,9 @@ const Sidebar: React.FC<SidebarProps> = ({
       //check if city was already added to list , add to list if it doesnt
       throw new Error("this city was already added");
     }
-
-    getWeather();
-
+    getWeather(query);
     setQuery("");
+    setFetchError("");
   }
 
   return (
@@ -99,6 +91,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             value={query}
           />
         </form>
+        {fetchError && <span className="text-red-500">{fetchError}</span>}
       </div>
       <div>
         <div className="flex flex-col gap-5">
@@ -114,7 +107,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
       {isLoading && <span>{isLoading}</span>}
-      {fetchError && <span>{fetchError}</span>}
     </div>
   );
 };
