@@ -29,7 +29,7 @@ const WeatherData = ({ currentWeather }: WeatherDataProps) => {
           throw new Error(`HTTP error! status: ${res.status}`);
         } else {
           const data = await res.json();
-          console.log(data);
+
           setWeatherImages(data.results);
         }
       } catch (error) {
