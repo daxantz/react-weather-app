@@ -45,6 +45,10 @@ const WeatherData = ({ currentWeather }: WeatherDataProps) => {
     getWeatherImage();
   }, [currentWeather?.weather]);
 
+  // if (!currentWeather) return <p>search for a city to view the weather</p>;
+  if (isloading) return <p>Loading...</p>;
+  if (fetchError) return <p>{fetchError}</p>;
+
   return (
     <div className="flex ">
       <div className=" w-[60%] p-16">
