@@ -38,7 +38,7 @@ const CityLink = (
       </div>
       <div className="flex gap-5">
         <span>{cityWeather.main.temp}&deg;F</span>
-        <Link to={`city/${cityWeather.id}`}>
+        <Link to={`city/${cityWeather.name}`}>
           {" "}
           <span onClick={setCity}>&rarr;</span>
         </Link>
